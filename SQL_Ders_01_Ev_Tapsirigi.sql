@@ -1,0 +1,100 @@
+-- Task 1
+SELECT 
+    FIRST_NAME, 
+    LAST_NAME, 
+    SALARY,
+    SALARY * 1.10 AS YENI_MAAS
+FROM 
+    HR.EMPLOYEES;
+
+-- Task 2
+SELECT 
+    DISTINCT COUNTRY_ID 
+FROM
+    HR.LOCATIONS;
+
+-- Task 3
+SELECT
+    FIRST_NAME,
+    DEPARTMENT_ID,
+    SALARY
+FROM    
+    HR.EMPLOYEES
+WHERE
+    (DEPARTMENT_ID = 50 AND SALARY < 3000)
+OR 
+    (DEPARTMENT_ID = 80 AND SALARY > 10000);
+
+-- Task 4
+SELECT
+    JOB_TITLE,
+    MIN_SALARY
+FROM
+    HR.JOBS
+WHERE 
+    MIN_SALARY >= 4000 AND MIN_SALARY <= 6000;
+
+-- Task 5
+SELECT
+    CITY,
+    COUNTRY_ID
+FROM 
+    HR.LOCATIONS
+WHERE 
+    COUNTRY_ID IN ('US', 'UK', 'CA');
+
+-- Task 6
+SELECT
+    FIRST_NAME,
+    LAST_NAME
+FROM
+    HR.EMPLOYEES
+WHERE   
+    FIRST_NAME LIKE 'S____' 
+AND 
+    lAST_NAME LIKE '%a%';
+
+-- Task 7
+SELECT
+    DEPARTMENT_NAME
+FROM
+    HR.DEPARTMENTS
+WHERE 
+    MANAGER_ID IS NULL;
+
+-- Task 8
+SELECT
+    JOB_TITLE,
+    MAX_SALARY - MIN_SALARY AS MAAS_FERQI
+FROM
+    HR.JOBS
+ORDER BY
+    MAAS_FERQI DESC
+FETCH FIRST 3 ROWS ONLY;
+
+-- Task 9
+SELECT
+    COUNT(*) AS "işçilərin sayı",
+    COUNT(COMMISSION_PCT) AS "komissiya alan işçilərin sayı",
+    ROUND(AVG(SALARY), 2) AS "orta maaş",
+    MAX(SALARY) - MIN(SALARY) AS "maaş fərqi"
+FROM
+    HR.EMPLOYEES
+WHERE 
+    DEPARTMENT_ID = 80;
+
+-- Task 10
+SELECT 
+    FIRST_NAME AS AD, 
+    SALARY
+FROM 
+    HR.EMPLOYEES
+WHERE 
+    FIRST_NAME LIKE 'A%' 
+    -- WHERE de oz verdiyimiz adlandirmadan istifade ede bilmerik 
+    -- AD LIKE 'A%' olmaz
+    -- "A%" yazilisi sehvdi, tek dirnaq olmalidi -> 'A%'
+AND 
+    COMMISSION_PCT IS NULL;
+    -- COMMISSION_PCT = NULL; ifadesi sehvdi
+    -- COMMISSION_PCT IS NULL; olmalidi
