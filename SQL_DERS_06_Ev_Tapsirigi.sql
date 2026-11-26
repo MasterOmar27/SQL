@@ -1,0 +1,309 @@
+-- TASK 1
+
+-- a)
+SELECT
+    FIRST_NAME,
+    LAST_NAME,
+    DEPARTMENT_ID
+FROM
+    HR.EMPLOYEES
+WHERE
+    DEPARTMENT_ID IN (
+        SELECT DEPARTMENT_ID
+        FROM HR.DEPARTMENTS
+        WHERE DEPARTMENT_NAME IN ('Marketing', 'Purchasing', 'IT')
+    );
+
+-- b) EXISTS ile
+SELECT
+    E.FIRST_NAME,
+    E.LAST_NAME,
+    E.DEPARTMENT_ID
+FROM
+    HR.EMPLOYEES E
+WHERE
+    EXISTS (
+        SELECT 1
+        FROM HR.DEPARTMENTS D
+        WHERE
+            D.DEPARTMENT_ID = E.DEPARTMENT_ID
+            AND D.DEPARTMENT_NAME IN ('Marketing', 'Purchasing', 'IT')
+    );
+
+
+-- TASK 2
+SELECT
+    E.EMPLOYEE_ID,
+    E.FIRST_NAME,
+    E.LAST_NAME
+FROM
+    HR.EMPLOYEES E
+WHERE
+    EXISTS (
+        SELECT 1
+        FROM HR.EMPLOYEES M
+        WHERE
+            M.MANAGER_ID = E.EMPLOYEE_ID
+    );
+
+
+-- TASK 3
+
+-- a)
+SELECT
+    TO_CHAR(TO_DATE('2026/12/31', 'YYYY/MM/DD'), 'DD.MM.YYYY HH24:MI') AS TARIX
+FROM
+    DUAL;
+
+-- b)
+SELECT
+    TO_CHAR(TO_DATE('31-12-2026 23:59', 'DD-MM-YYYY HH24:MI'), 'DD.MM.YYYY HH24:MI') AS TARIX
+FROM
+    DUAL;
+
+-- c)
+SELECT
+    TO_CHAR(TO_DATE('20261231', 'YYYYMMDD'), 'DD.MM.YYYY HH24:MI') AS TARIX
+FROM
+    DUAL;
+
+-- d)
+SELECT
+    TO_CHAR(TO_DATE('December 31, 2026', 'FMMonth DD, YYYY', 'NLS_DATE_LANGUAGE=English'), 'DD.MM.YYYY HH24:MI') AS TARIX
+FROM
+    DUAL;
+
+-- e)
+SELECT
+    TO_CHAR(TO_DATE('2026@12@31  08:30', 'YYYY@MM@DD  HH24:MI'), 'DD.MM.YYYY HH24:MI') AS TARIX
+FROM
+    DUAL;
+
+-- a), c), d) tarixlerinde saat qeyd olunmadigi ucun saat 00:00 olur
+-- b)-de saat 23:59, e)-de ise 08:30 olaraq verilib
+
+
+-- TASK 4
+
+-- a)
+SELECT
+    FIRST_NAME,
+    LAST_NAME,
+    HIRE_DATE
+FROM
+    HR.EMPLOYEES
+WHERE
+    HIRE_DATE >= DATE '2008-01-01'
+ORDER BY
+    HIRE_DATE ASC;
+
+-- b)
+SELECT
+    FIRST_NAME,
+    LAST_NAME,
+    HIRE_DATE
+FROM
+    HR.EMPLOYEES
+WHERE
+    HIRE_DATE >= TO_DATE('01-01-2008', 'DD-MM-YYYY')
+ORDER BY
+    HIRE_DATE ASC;
+
+-- >= yerine > yazsaq, HIRE_DATE deyeri 01.01.2008 00:00:00 olan isciler
+-- neticeden duse biler
+
+
+-- TASK 5
+
+-- a) NOT EXISTS - 1 setir qaytarir
+SELECT
+    E.EMPLOYEE_ID,
+    E.FIRST_NAME,
+    E.LAST_NAME,
+    E.DEPARTMENT_ID
+FROM
+    HR.EMPLOYEES E
+WHERE
+    NOT EXISTS (
+        SELECT 1
+        FROM HR.DEPARTMENTS D
+        WHERE D.DEPARTMENT_ID = E.DEPARTMENT_ID
+    );
+
+-- b) NOT IN - 0 setir qaytarir
+SELECT
+    E.EMPLOYEE_ID,
+    E.FIRST_NAME,
+    E.LAST_NAME,
+    E.DEPARTMENT_ID
+FROM
+    HR.EMPLOYEES E
+WHERE
+    E.DEPARTMENT_ID NOT IN (
+        SELECT D.DEPARTMENT_ID
+        FROM HR.DEPARTMENTS D
+    );
+
+-- NOT EXISTS NULL olan DEPARTMENT_ID deyerini de neticeye daxil edir
+-- NOT IN ise xarici sorguda DEPARTMENT_ID NULL oldugu ucun hemin setiri daxil etmir
+-- EMPLOYEE_ID = 178 olan Kimberely Grant-in DEPARTMENT_ID deyeri NULL-dir
+
+
+-- TASK 6
+
+-- a)
+SELECT
+    E.EMPLOYEE_ID,
+    E.FIRST_NAME,
+    E.LAST_NAME
+FROM
+    HR.EMPLOYEES E
+WHERE
+    E.DEPARTMENT_ID = 50
+AND
+    E.EMPLOYEE_ID NOT IN (
+        SELECT M.MANAGER_ID
+        FROM HR.EMPLOYEES M
+    );
+
+-- 0 setir qaytarir, cunki daxili sorguda NULL deyeri var
+-- EMPLOYEE_ID = 100 olan Steven King-in MANAGER_ID deyeri NULL-dir
+
+-- b)
+SELECT
+    E.EMPLOYEE_ID,
+    E.FIRST_NAME,
+    E.LAST_NAME
+FROM
+    HR.EMPLOYEES E
+WHERE
+    E.DEPARTMENT_ID = 50
+AND NOT EXISTS (
+    SELECT 1
+    FROM HR.EMPLOYEES M
+    WHERE M.MANAGER_ID = E.EMPLOYEE_ID
+);
+
+-- c)
+SELECT
+    E.EMPLOYEE_ID,
+    E.FIRST_NAME,
+    E.LAST_NAME
+FROM
+    HR.EMPLOYEES E
+WHERE
+    E.DEPARTMENT_ID = 50
+AND
+    E.EMPLOYEE_ID NOT IN (
+        SELECT M.MANAGER_ID
+        FROM HR.EMPLOYEES M
+        WHERE M.MANAGER_ID IS NOT NULL
+    );
+
+
+-- TASK 7
+
+-- a)
+SELECT
+    FIRST_NAME,
+    LAST_NAME,
+    HIRE_DATE
+FROM
+    HR.EMPLOYEES
+WHERE
+    HIRE_DATE >= TO_DATE('01.07.2006', 'DD.MM.YYYY')
+AND
+    HIRE_DATE < TO_DATE('01.01.2007', 'DD.MM.YYYY')
+ORDER BY
+    HIRE_DATE ASC;
+
+-- b)
+SELECT
+    FIRST_NAME,
+    LAST_NAME,
+    HIRE_DATE
+FROM
+    HR.EMPLOYEES
+WHERE
+    HIRE_DATE BETWEEN TO_DATE('01.07.2006', 'DD.MM.YYYY')
+AND
+    TO_DATE('31.12.2006', 'DD.MM.YYYY')
+ORDER BY
+    HIRE_DATE ASC;
+
+-- HIRE_DATE-de saat da olsaydi, 31.12.2006 tarixinde
+-- saat 00:00:00-dan sonra ise girenler neticeye daxil olmazdi
+
+
+-- TASK 8
+
+-- a)
+SELECT
+    D.DEPARTMENT_ID,
+    D.DEPARTMENT_NAME
+FROM
+    HR.DEPARTMENTS D
+WHERE EXISTS (
+    SELECT 1
+    FROM HR.EMPLOYEES E
+    WHERE
+        E.DEPARTMENT_ID = D.DEPARTMENT_ID
+        AND E.HIRE_DATE >= DATE '2007-01-01'
+);
+
+-- b)
+SELECT
+    DEPARTMENT_ID,
+    DEPARTMENT_NAME
+FROM
+    HR.DEPARTMENTS
+WHERE
+    DEPARTMENT_ID IN (
+        SELECT DEPARTMENT_ID
+        FROM HR.EMPLOYEES
+        WHERE HIRE_DATE >= DATE '2007-01-01'
+    );
+
+-- JOIN istifade etdikde bir sobede serti odeyen bir nece isci ola biler
+-- Buna gore eyni sobe neticede bir nece defe tekrarlanar
+
+
+-- TASK 9
+SELECT
+    FIRST_NAME,
+    HIRE_DATE
+FROM
+    HR.EMPLOYEES E
+WHERE
+    E.HIRE_DATE >= TO_DATE('15/03/2006', 'DD/MM/YYYY')
+AND EXISTS (
+    SELECT 1
+    FROM HR.DEPARTMENTS D
+    WHERE
+        D.DEPARTMENT_ID = E.DEPARTMENT_ID
+        AND D.DEPARTMENT_NAME = 'Sales'
+);
+
+-- 1. Tarix formatinda DD/MM/YYYY istifade edilmelidir
+-- 2. EXISTS daxilinde D.DEPARTMENT_ID ile E.DEPARTMENT_ID
+-- elaqelendirilmeli idi
+-- 3. 'sales' sehv idi, cunku DEPARTMENT_NAME deyerinde 'Sales' yazilib
+
+
+-- TASK 10
+
+-- a), b), c)
+SELECT
+    TO_DATE('1999@07@23', 'YYYY@MM@DD') AS DOGUM_TARIXI,
+    TRUNC(MONTHS_BETWEEN(SYSDATE, TO_DATE('1999@07@23', 'YYYY@MM@DD')) / 12) AS YAS,
+    TO_CHAR(TO_DATE('1999@07@23', 'YYYY@MM@DD'), 'FMDAY') AS GUN
+FROM
+    DUAL;
+
+-- d)
+SELECT
+    DATE '1999-07-23' AS DOGUM_TARIXI,
+    TRUNC(MONTHS_BETWEEN(SYSDATE, DATE '1999-07-23') / 12) AS YAS,
+    TO_CHAR(DATE '1999-07-23', 'FMDAY') AS GUN
+FROM
+    DUAL;
